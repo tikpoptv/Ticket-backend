@@ -1,15 +1,24 @@
 package router
 
 import (
-	"net/http"
+	"ticket-backend/internal/handlers/auth"
+
+	"github.com/gin-gonic/gin"
 )
 
-func SetupRouter() http.Handler {
-	mux := http.NewServeMux()
+func SetupRouter() *gin.Engine {
+	r := gin.Default()
 
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Welcome to the API!"))
+	// Welcome message
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "Welcome to the API!",
+		})
 	})
 
-	return mux
+	// Register endpoint
+	authHandler := auth.NewRegisterHandler()
+	r.POST("/register", authHandler.Register)
+
+	return r
 }
